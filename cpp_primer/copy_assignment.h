@@ -1,5 +1,7 @@
 #pragma once
-
+#include <vector>
+#include <memory>
+#include <string>
 /*
 	第13章  拷贝控制
 */
@@ -36,7 +38,31 @@ namespace copy_assignment
 			如果这个类需要一个析构函数，几乎可以肯定它也需要一个拷贝构造函数和一个拷贝赋值函数
 
 		*/
+
 	};
-	
+
+	// 行为像值的类
+	class HasPtr
+	{
+	public:
+		HasPtr() = default;
+		HasPtr(const std::string& s = std::string()) : ps(new std::string(s)), i(0)
+		{
+		}
+		HasPtr(const HasPtr& p) : ps(new std::string(*p.ps)), i(p.i)
+		{
+
+		}
+		HasPtr& operator=(const HasPtr&);
+
+		~HasPtr() 
+		{
+			delete ps;
+		}
+	private:
+		std::string *ps;
+		int	i;
+	};
+
 };
 
