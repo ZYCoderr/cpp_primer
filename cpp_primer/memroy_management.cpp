@@ -82,7 +82,7 @@ namespace memroy_management
 
 		// 虽然我们不能拷贝或赋值unique_ptr， 但可以通过调用release或reset
 		// 将指针的所有权从一个(非const)unique_ptr转移给另一个unique_ptr
-		unique_ptr<string> p4(p3.release); // release将p3所有权（指向Abc）转移给，并将p3置为空，
+		unique_ptr<string> p4(p3.release()); // release将p3所有权（指向Abc）转移给，并将p3置为空，
 		unique_ptr<string> p5(new string("Text"));
 		// 将所有权从p5转给p3
 		p3.reset(p5.release()); // reset释放了p2原来指向的内存

@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <set>
 /*
 	第13章  拷贝控制
 */
@@ -63,6 +64,70 @@ namespace copy_assignment
 		std::string *ps;
 		int	i;
 	};
+
+
+	// 行为像指针的类
+	// 引入应用计数机制，并将计数器保存在动态内存中。
+	// 当创建一个对象时，我们也分配一个新的计数器
+	// 当拷贝或赋值对象时，我们拷贝指向计数器的指针
+	// 使用这种方法，副本和原对象都会指向相同的计数器
+	class HasPtr_pt
+	{
+	public:
+		HasPtr_pt(const std::string& s = std::string())
+			: ps(new std::string(s)), i(0), use(new std::size_t(1)) {}
+		HasPtr_pt& operator=(const HasPtr_pt&);
+		~HasPtr_pt();
+	private:
+		std::string *ps;
+		int i;
+		std::size_t* use;
+	};
+
+	// 拷贝控制示例	
+	class Message;
+	class Folder
+	{
+	public:
+		void addMsg(Message* msg);
+		void remMsg(Message* msg);
+
+	private:
+		std::set<Message*> msgs;
+	};
+
+
+	class Message
+	{
+		friend class Folder;
+		friend void swap(Message& lhs, Message& rhs);
+	public:
+		// floders被隐式初始化为空集合
+		explicit Message(const std::string& str = "")
+			: contents(str) {}
+		Message(const Message&); 
+		Message(const Message&&);
+		Message& operator=(const Message&);		
+		Message& operator=(Message&&);
+		~Message();
+		// 从给定的Folder集合中添加、删除本Message
+		void save(Folder&);
+		void remove(Folder&);
+		void move_Folders(Message *m);
+
+	private:
+		std::string contents; // 实际消息文本
+		std::set<Folder*> folders; // 包含本Message的Folder
+		// 拷贝构造函数、拷贝赋值运算符和析构函数中所使用的工具函数
+		// 将本Message添加到指向参数的Folder中
+		void add_to_Folders(const Message&);
+		// 从folers中的每个Folder中删除本Message
+		void remove_from_Folders();
+	};
+
+
+
+
 
 };
 
