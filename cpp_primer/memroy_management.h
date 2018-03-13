@@ -1,7 +1,7 @@
-#pragma once
+ï»¿#pragma once
 
 /*
-	ÄÚ´æ¹ÜÀíÕÂ½Ú£ºÖÇÄÜÖ¸Õë
+	å†…å­˜ç®¡ç†ç« èŠ‚ï¼šæ™ºèƒ½æŒ‡é’ˆ
 */
 
 
@@ -20,10 +20,10 @@ namespace memroy_management
 		StrBlob(std::initializer_list<std::string> il);
 		size_type size() const { return data->size(); }
 		bool empty() const { return data->empty(); }
-		// Ìí¼ÓºÍÉ¾³ıÔªËØ
+		// æ·»åŠ å’Œåˆ é™¤å…ƒç´ 
 		void push_back(const std::string& t) { data->push_back(t); }
 		void pop_back();
-		// ÔªËØ·ÃÎÊ
+		// å…ƒç´ è®¿é—®
 		std::string& front();
 		std::string& back();
 

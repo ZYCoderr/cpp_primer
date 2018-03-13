@@ -27,6 +27,9 @@
     <ClInclude Include="copy_assignment.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="templates_and_generic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +42,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="copy_assignment.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="templates_and_generic.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
