@@ -32,6 +32,4 @@ namespace memroy_management
 		void check(size_type i, const std::string& msg) const;
 	};
 
-	void Test();
-	
 };

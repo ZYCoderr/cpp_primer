@@ -11,6 +11,7 @@ namespace memroy_management
 	using std::out_of_range;
 	using std::unique_ptr;
 	using std::weak_ptr;
+
 	StrBlob::StrBlob() : data(make_shared<vector<string>>()) {}
 
 	StrBlob::StrBlob(initializer_list<string> il) : data(make_shared<vector<string>>(il)) {}
@@ -46,7 +47,7 @@ namespace memroy_management
 	} // ptr离开作用域，被销毁
 
 	/*
-		只能指针可以提供对动态分配的内存安全而又方便的管理， 但这建立在正确使用的前提下
+		智能指针可以提供对动态分配的内存安全而又方便的管理， 但这建立在正确使用的前提下
 		为了正确使用智能指针，我们必须坚持一些基本规范：
 		1. 不提供相同的内置指针初始化（或reset）多个智能指针
 		2. 不用delete get()返回的指针
@@ -88,7 +89,7 @@ namespace memroy_management
 		p3.reset(p5.release()); // reset释放了p2原来指向的内存
 
 		// release会切断unique_ptr和它原来管理的对象之间的联系
-		// release返回的指针通常被用来初始化另一个只能指针或给另一个智能指针赋值
+		// release返回的指针通常被用来初始化另一个智能指针或给另一个智能指针赋值
 
 	}
 
@@ -106,7 +107,7 @@ namespace memroy_management
 
 		// 由于对象可能不存在，我们不能使用weak_ptr直接访问对象，而必须调用lock
 		// 此函数检查weak_ptr指向的对象是否存在。如果存在，lock返回一个指向共享对象的shared_ptr
-		// 于其他任何shared_ptr类似， 只要此shared_ptr存在，它所指向的底层对象也就会一直存在
+		// 与其他任何shared_ptr类似， 只要此shared_ptr存在，它所指向的底层对象也就会一直存在
 		if (shared_ptr<int> np = wp.lock()) { // 如果np不为空则条件成立
 			// 在if中，np于p共享对象
 		}

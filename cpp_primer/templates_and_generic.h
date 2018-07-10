@@ -5,6 +5,7 @@
 #include <string>
 #include <type_traits>
 #include <iostream>
+
 // 模板与泛型编程
 namespace templates_and_generic
 {
@@ -105,7 +106,8 @@ namespace templates_and_generic
 	{
 		if (!c.empty()) {
 			return c.back();
-		} else {
+		}
+		else {
 			return typename T::value_type();
 		}
 	}
@@ -125,21 +127,21 @@ namespace templates_and_generic
 	}
 
 	// 如果要使用类模板的默认实参没需要在末班明之后跟一个空尖括号对
-	template <typename T = int> 
+	template <typename T = int>
 	class Numbers // T默认为int
 	{
 	public:
 		Numbers(T v = 0) : val(v) {}
-		template <typename It> 
+		template <typename It>
 		Numbers(It b, It e);
 	private:
 		T val;
 
-		
+
 	};
 	/*
 		Numbers<double> a;
-		Numbers<> b; // 空<>表示我们希望使用默认类型 
+		Numbers<> b; // 空<>表示我们希望使用默认类型
 	*/
 
 	// 与模板类的普通成员不同，成员模板是函数模板
@@ -182,10 +184,10 @@ namespace templates_and_generic
 		return *beg;
 	}
 
-	
+
 	// 当我们用一个函数模板初始化一个函数指针或为一个函数指针赋值时
 	// 编译器使用指针的类型来推断模板实参
-	template <typename T> 
+	template <typename T>
 	int compare(const T& a, const T& b) { return a < b; }
 	int(*pf1)(const int&, const int&) = compare;
 
@@ -195,7 +197,7 @@ namespace templates_and_generic
 
 	template <typename T> void f3(T&& val)
 	{
-		T t = val; 
+		T t = val;
 	}
 	// 当我们将一个左值传递给函数的右值引用参数
 	// 而且此右值引用指向模板类型参数(如T&&)时
@@ -222,11 +224,12 @@ namespace templates_and_generic
 
 
 	/*-------------------------------  理解std::move()    -----------------------------------------*/
-	
-	// std::move的定义：
+
+
 	/*
+		std::move的定义：
 		template <typename T>
-		typename remove_reference<T>::type&& move(T&& t) 
+		typename remove_reference<T>::type&& move(T&& t)
 		{
 			return static_cast<typename remove_reference<T>::type&&>(t);
 		}
@@ -256,7 +259,7 @@ namespace templates_and_generic
 
 	/*-------------------------------  转发    -----------------------------------------*/
 
-	// 如果一个函数参数时指向模板类型参数的右值引用(如T&&)
+	// 如果一个函数参数是指向模板类型参数的右值引用(如T&&)
 	// 它对应的实参的const属性和左值/右值属性将得到保持
 	/*
 		有些函数需要将其一个或多个实参联通类型不变地转发给其他函数
@@ -269,7 +272,7 @@ namespace templates_and_generic
 	template <typename F, typename T1, typename T2>
 	void flip1(F f, T1 t1, T2 t2)
 	{
-		
+
 		f(t2, t1);
 	}
 	// 这个函数一般情况下工作得很好
@@ -312,7 +315,6 @@ namespace templates_and_generic
 
 
 
-
 	/*-------------------------------  重载与模板    -----------------------------------------*/
 
 	// 函数模板可以被另一个模板或一个普通非模板函数重载
@@ -335,15 +337,16 @@ namespace templates_and_generic
 		}
 		return ret.str(); // 返回ret绑定的string的一个副本 
 	}
-	
+
 	// 一个特定文件所需要的所有模板的声明通常一起放置在文件开始的位置
 	// 出现于任何使用这些模板的代码之前
+
 
 
 /*-------------------------------  可变参数模板    -----------------------------------------*/
 
 	// 可变参数模板就是一个接受可变数目参数的模板函数或模板类
-	// 可变数目的参数被称为参数包。
+	// 可变数目的参数被称为【参数包】。
 	// 存在两种参数包：
 	// 模板参数包表示零个或多个模板参数
 	// 函数参数包表示零个或多个函数参数
@@ -382,7 +385,6 @@ namespace templates_and_generic
 		std::cout << sizeof...(args) << std::endl; // 函数参数的数目
 	}
 
-	
 	// 用来终止递归并打印最后一个元素的函数
 	// 此函数必须在可变参数版本的print定义之前声明
 	template <typename T>
@@ -402,6 +404,7 @@ namespace templates_and_generic
 	// 因此在每个调用中，包的第一个实参被移除，成为绑定到t的实参
 
 
+
 	/*-------------------------------  包扩展    -----------------------------------------*/
 
 	// 对于一个参数包，除了获取其大小外，我们能对它做的唯一的事情就是【扩展】它
@@ -409,12 +412,90 @@ namespace templates_and_generic
 	// 扩展一个包就是将它分解为构成的元素，对每个元素应用模式，获得扩展后的列表
 	// 我们通过在模式右边放一个省略号(...)来触发扩展操作
 	template <typename T, typename... Args>
-	std::ostream& print1(std::ostream& os, const T& t, const Args&... rest) // 扩展Args
+	std::ostream& print1(std::ostream& os, const T& t, const Args&... rest) // 扩展Args，为print生成函数参数列表
 	{
 		os << t << ", ";
-		return print1(os, rest...); // 扩展rest
+		return print1(os, rest...); // 扩展rest，为print调用生成实参列表
 	}
 
+	// 扩展中的【模式】会独立地应用于包中的每个元素
+	/*
+		对Args的扩展中，编译器将【模式】const Args&应用到模板参数包Args中的每个元素
+		因此对模式的扩展结果是一个逗号分隔的零个或多个类型的列表
+		每个类型都形如const Type&。例如
+			print(cout, i, s, 42)
+		最后两个实参的类型和模式一起确定了尾置参数的类型。此调用被实例化为
+			ostream&
+			print(ostream&, const int&, const string&, const int&)
 
+		对rest的扩展发生在对print的递归调用中。此情况下，模式是函数参数包的名字
+		此模式扩展出一个由保重元素组成的、逗号分隔的列表。因此这个调用等价于
+			print(os, s, 42)
+	*/
+
+	// print中的函数参数包括站仅仅将包扩展为其构成元素，C++语言还允许更复杂的扩展模式
+	// 在pirnt调用中对每个实参调用debug_rep
+	template <typename... Args>
+	std::ostream& errorMsg(std::ostream& os, const Args&... rest)
+	{
+		// print(os, debug_rep(a1), debug_rep(a2), ..., debug_rep(an))
+		return print(os, debug_rep(rest)...);
+	}
+	/*
+		这个print调用使用了模式debug_rep(rest)。
+		此模式表示我们希望对函数参数包rest中的每个元素调用debug_rep
+		扩展结果将是一个逗号分隔的debug_rep调用列表
+		即下面的调用
+			errorMsg(cerr, fncName, code.num(), otherData, "other", item);
+		就好像我们编写下面的代码一样：
+			print(cerr, debug_rep(fncName), debug_rep(code.num()), debug_rep(otherData), debug_rep("other"), debug_rep(item));
+
+		与之相对，下面的模式会编译失败
+			// 将包传递给debug_rep; print(os, debug_rep(a1, a2, ..., an)
+			print(os, debug_rep(rest...)); // 错误：此调用无匹配函数
+		这段代码的问题是我们在debug_rep调用中扩展了rest，它等价于
+		print(cerr, debug_rep(fncName, code.num(), otherData, "other", item));
+		在这个扩展中，我么试图用一个五个实参的列表来调用debug_rep
+		但并不存在与此调用匹配的debug_rep版本
+		debug_rep函数是不可变参数的，而且没有哪个debug_rep版本接受五个参数
+	*/
+
+
+
+	/*-------------------------------  转发参数包    -----------------------------------------*/
+
+	// 在新标准下，我们可以组合使用可变参数模板与forward机制来编写函数
+	// 实现将其实参不变地传递给其他函数
+
+	class StrVec
+	{
+	public:
+		template <typename... Args> void emplace_back(Args&&...);
+		StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) {}
+		StrVec(const StrVec&); 
+		StrVec& operator=(const StrVec&);
+		~StrVec();
+		void push_back(const std::string&); // 拷贝元素
+		size_t size() const { return first_free - elements; }
+		size_t capacity() const { return cap - elements; }
+		std::string* begin() const { return elements; }
+		std::string* end() const { return first_free; }
+
+
+	private:
+		static std::allocator<std::string> alloc; // 分配元素
+		// 被添加元素的函数所使用
+		void chk_n_alloc()
+		{
+			if (size() == capacity()) reallocate();
+		}
+		// 工具函数，被拷贝构造函数、复制运算符和析构函数所使用
+		std::pair<std::string*, std::string*> alloc_n_copy(const std::string*, const std::string*);
+		void free(); // 销毁元素并释放内存
+		void reallocate(); // 获得更多内存并拷贝已有元素
+		std::string* elements; // 指向数组首元素的指针
+		std::string* first_free; // 指向数组第一个空闲元素的指针
+		std::string* cap; // 指向数组尾后位置的指针
+	};
 };
 
